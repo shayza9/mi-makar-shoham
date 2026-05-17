@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { Camera } from 'lucide-react'
 import type { Category } from '@/types'
 
 export default function EditProfilePage() {
@@ -15,6 +16,9 @@ export default function EditProfilePage() {
   const [newCatName, setNewCatName] = useState('')
   const [addingCat, setAddingCat] = useState(false)
   const [showNewCat, setShowNewCat] = useState(false)
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const [avatarPreview, setAvatarPreview] = useState<string>('')
+  const fileRef = useRef<HTMLInputElement>(null)
 
   const [form, setForm] = useState({
     full_name: '',
@@ -27,6 +31,7 @@ export default function EditProfilePage() {
     linkedin_url: '',
     facebook_url: '',
     description: '',
+    avatar_url: '',
   })
 
   const router = useRouter()
@@ -55,6 +60,7 @@ export default function EditProfilePage() {
           linkedin_url: profile.linkedin_url || '',
           facebook_url: profile.facebook_url || '',
           description: profile.description || '',
+          avatar_url: profile.avatar_url || '',
         })
       }
       if (cats) setCategories(cats)
@@ -99,9 +105,22 @@ export default function EditProfilePage() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { router.push('/auth/login'); return }
 
+    let avatar_url = form.avatar_url
+    if (avatarFile) {
+      const fileExt = avatarFile.name.split('.').pop()
+      const filePath = `${user.id}/avatar.${fileExt}`
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, avatarFile, { upsert: true })
+      if (!uploadError) {
+        const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(filePath)
+        avatar_url = publicUrl
+      }
+    }
+
     const { error: profileError } = await supabase
       .from('profiles')
-      .update({ ...form })
+      .update({ ...form, avatar_url })
       .eq('id', user.id)
 
     if (profileError) { setError('שגיאה בשמירה. נסה שוב.'); setSaving(false); return }
@@ -128,6 +147,37 @@ export default function EditProfilePage() {
         <h1 className="text-xl font-bold text-navy-900 mb-6">עריכת פרופיל</h1>
 
         <form onSubmit={handleSave} className="space-y-4">
+          {/* Avatar upload */}
+          <div className="flex flex-col items-center gap-1 mb-2">
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="relative w-20 h-20 rounded-full overflow-hidden bg-navy-800 flex items-center justify-center text-white text-3xl font-bold cursor-pointer hover:opacity-90 transition-opacity group"
+            >
+              {avatarPreview || form.avatar_url ? (
+                <img src={avatarPreview || form.avatar_url} alt="" className="w-full h-full object-cover" />
+              ) : (
+                form.full_name.charAt(0) || '?'
+              )}
+              <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <Camera size={20} className="text-white" />
+              </div>
+            </button>
+            <p className="text-xs text-slate-400">לחץ לשינוי תמונה</p>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={e => {
+                const file = e.target.files?.[0]
+                if (!file) return
+                setAvatarFile(file)
+                setAvatarPreview(URL.createObjectURL(file))
+              }}
+            />
+          </div>
+
           <div>
             <label className={labelClass}>שם מלא *</label>
             <input type="text" value={form.full_name} onChange={e => update('full_name', e.target.value)}

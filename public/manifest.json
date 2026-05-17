@@ -1,0 +1,19 @@
+{
+  "name": "מי מכיר? שוהם והאזור",
+  "short_name": "מי מכיר?",
+  "description": "מאגר קהילתי לתושבי שוהם והאזור - מצא מומחים ומתנדבים מהשכנים שלך",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#132b5e",
+  "lang": "he",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

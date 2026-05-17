@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Phone, Mail, Briefcase, Heart, ExternalLink, Edit } from 'lucide-react'
 import ContactButton from '@/components/profile/ContactButton'
+import ShareButton from '@/components/profile/ShareButton'
 
 export default async function ProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -68,12 +69,15 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
               </div>
             </div>
           </div>
-          {isOwn && (
-            <Link href="/profile/edit" className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-sm">
-              <Edit size={14} />
-              ערוך
-            </Link>
-          )}
+          <div className="flex gap-2">
+            <ShareButton name={profile.full_name} profileId={actualId} />
+            {isOwn && (
+              <Link href="/profile/edit" className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-sm">
+                <Edit size={14} />
+                ערוך
+              </Link>
+            )}
+          </div>
         </div>
       </div>
 

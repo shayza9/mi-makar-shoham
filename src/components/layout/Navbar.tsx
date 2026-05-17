@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Search, Users, MessageSquare, User, LogOut, Shield } from 'lucide-react'
+import { Search, Users, MessageSquare, User, LogOut, Shield, Share2 } from 'lucide-react'
 import { useEffect, useState, useRef } from 'react'
 import type { Profile } from '@/types'
 
@@ -70,6 +70,7 @@ export default function Navbar() {
             {profile ? (
               <>
                 {profile.is_admin && navLink('/admin', <Shield size={16} />, 'ניהול')}
+                {navLink('/invite', <Share2 size={16} />, 'הזמן')}
                 {navLink('/profile/me', <User size={16} />, 'הפרופיל שלי')}
                 <button
                   onClick={handleLogout}

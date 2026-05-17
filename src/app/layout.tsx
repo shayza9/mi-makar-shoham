@@ -6,6 +6,12 @@ export const metadata: Metadata = {
   title: 'מי מכיר? שוהם והאזור',
   description: 'מאגר קהילתי לתושבי שוהם והאזור - מצא מומחים ומתנדבים מהשכנים שלך',
   manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'מי מכיר?',
+  },
+  icons: { apple: '/logo.png' },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
