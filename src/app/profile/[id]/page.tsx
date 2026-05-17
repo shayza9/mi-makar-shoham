@@ -3,7 +3,6 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Phone, Mail, Briefcase, Heart, ExternalLink, Edit } from 'lucide-react'
-import ContactButton from '@/components/profile/ContactButton'
 import ShareButton from '@/components/profile/ShareButton'
 
 export default async function ProfilePage({ params }: { params: Promise<{ id: string }> }) {
@@ -27,16 +26,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
   const { data: { user } } = await supabase.auth.getUser()
   const isOwn = user?.id === actualId
 
-  const { data: contactRequest } = user && !isOwn
-    ? await supabase
-        .from('contact_requests')
-        .select('status')
-        .eq('from_id', user.id)
-        .eq('to_id', actualId)
-        .single()
-    : { data: null }
-
-  const showContactInfo = isOwn || contactRequest?.status === 'approved'
+  const showContactInfo = true
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -147,12 +137,6 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
                 </a>
               )}
             </div>
-          ) : (
-            <ContactButton
-              targetId={actualId}
-              currentUserId={user?.id}
-              existingStatus={contactRequest?.status}
-            />
           )}
         </div>
 
