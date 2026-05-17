@@ -130,26 +130,19 @@ export default function RegisterPage() {
 
     if (!user) { setError('שגיאה. נסה שוב.'); setLoading(false); return }
 
-    // upsert covers both cases: trigger already created row (update) or not yet (insert)
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .upsert({
-        id: user.id,
-        email: form.email,
-        full_name: form.full_name,
-        phone: form.phone,
-        profession: form.profession,
-        description: form.description,
-        help_offer: form.help_offer,
-        help_seek: form.help_seek,
-        is_volunteer: form.is_volunteer,
-        whatsapp_link: form.whatsapp_link,
-        linkedin_url: form.linkedin_url,
-        facebook_url: form.facebook_url,
-        is_approved: false,
-        is_admin: false,
-        badges: [],
-      }, { onConflict: 'id' })
+    const { error: profileError } = await supabase.rpc('save_registration_profile', {
+      p_email: form.email,
+      p_full_name: form.full_name,
+      p_phone: form.phone,
+      p_profession: form.profession,
+      p_description: form.description,
+      p_help_offer: form.help_offer,
+      p_help_seek: form.help_seek,
+      p_is_volunteer: form.is_volunteer,
+      p_whatsapp_link: form.whatsapp_link,
+      p_linkedin_url: form.linkedin_url,
+      p_facebook_url: form.facebook_url,
+    })
 
     if (profileError) {
       setError(`שגיאה בשמירת הפרופיל: ${profileError.message}`)
