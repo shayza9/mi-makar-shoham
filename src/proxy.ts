@@ -23,10 +23,15 @@ export async function proxy(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  const protectedRoutes = ['/profile', '/feed', '/admin', '/members']
-  const isProtected = protectedRoutes.some(r => request.nextUrl.pathname.startsWith(r))
+  const path = request.nextUrl.pathname
 
-  if (isProtected && !user) {
+  // Public routes — accessible without login
+  const isPublic =
+    path.startsWith('/auth') ||
+    path.startsWith('/invite') ||
+    path === '/favicon.ico'
+
+  if (!isPublic && !user) {
     return NextResponse.redirect(new URL('/auth/login', request.url))
   }
 
@@ -34,5 +39,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
+  matcher: ['/((?!_next/static|_next/image|.*\\.(?:svg|png|jpg|jpeg|gif|webp|json|ico)$).*)'],
 }
