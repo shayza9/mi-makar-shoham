@@ -101,7 +101,7 @@ export default function RegisterPage() {
     let user = (await supabase.auth.getUser()).data.user
 
     if (!user) {
-      const { data, error: signUpError } = await supabase.auth.signUp({
+      const { error: signUpError } = await supabase.auth.signUp({
         email: form.email,
         password: form.password,
       })
@@ -109,12 +109,23 @@ export default function RegisterPage() {
         if (signUpError.message.includes('already registered')) {
           setError('מייל זה כבר רשום. נסה להיכנס.')
         } else {
-          setError('שגיאה ביצירת החשבון. נסה שוב.')
+          setError(`שגיאה: ${signUpError.message}`)
         }
         setLoading(false)
         return
       }
-      user = data.user
+
+      // sign in immediately after sign up
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email: form.email,
+        password: form.password,
+      })
+      if (signInError || !signInData.user) {
+        setError('החשבון נוצר — אנא היכנס עם הסיסמה שלך.')
+        setLoading(false)
+        return
+      }
+      user = signInData.user
     }
 
     if (!user) { setError('שגיאה. נסה שוב.'); setLoading(false); return }
