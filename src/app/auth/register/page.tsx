@@ -130,10 +130,12 @@ export default function RegisterPage() {
 
     if (!user) { setError('שגיאה. נסה שוב.'); setLoading(false); return }
 
-    // Try update first (profile row already created by DB trigger on signup)
-    await supabase
+    // upsert covers both cases: trigger already created row (update) or not yet (insert)
+    const { error: profileError } = await supabase
       .from('profiles')
-      .update({
+      .upsert({
+        id: user.id,
+        email: form.email,
         full_name: form.full_name,
         phone: form.phone,
         profession: form.profession,
@@ -144,8 +146,16 @@ export default function RegisterPage() {
         whatsapp_link: form.whatsapp_link,
         linkedin_url: form.linkedin_url,
         facebook_url: form.facebook_url,
-      })
-      .eq('id', user.id)
+        is_approved: false,
+        is_admin: false,
+        badges: [],
+      }, { onConflict: 'id' })
+
+    if (profileError) {
+      setError(`שגיאה בשמירת הפרופיל: ${profileError.message}`)
+      setLoading(false)
+      return
+    }
 
     if (form.selectedCategories.length > 0) {
       await supabase.from('profile_categories').delete().eq('profile_id', user.id)
