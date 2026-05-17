@@ -18,6 +18,8 @@ export default function RegisterPage() {
   const supabase = createClient()
 
   const [form, setForm] = useState({
+    email: '',
+    password: '',
     full_name: '',
     phone: '',
     neighborhood: '',
@@ -52,8 +54,27 @@ export default function RegisterPage() {
   const handleSubmit = async () => {
     setLoading(true)
     setError('')
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { router.push('/auth/login'); return }
+
+    let user = (await supabase.auth.getUser()).data.user
+
+    if (!user) {
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: form.email,
+        password: form.password,
+      })
+      if (signUpError) {
+        if (signUpError.message.includes('already registered')) {
+          setError('מייל זה כבר רשום. נסה להיכנס.')
+        } else {
+          setError('שגיאה ביצירת החשבון. נסה שוב.')
+        }
+        setLoading(false)
+        return
+      }
+      user = data.user
+    }
+
+    if (!user) { setError('שגיאה. נסה שוב.'); setLoading(false); return }
 
     const { error: profileError } = await supabase
       .from('profiles')
@@ -117,6 +138,16 @@ export default function RegisterPage() {
         {/* Step 1 */}
         {step === 0 && (
           <div className="space-y-4">
+            <div>
+              <label className={labelClass}>כתובת מייל *</label>
+              <input type="email" value={form.email} onChange={(e) => update('email', e.target.value)}
+                placeholder="your@email.com" className={inputClass} required dir="ltr" />
+            </div>
+            <div>
+              <label className={labelClass}>סיסמה *</label>
+              <input type="password" value={form.password} onChange={(e) => update('password', e.target.value)}
+                placeholder="לפחות 6 תווים" className={inputClass} required minLength={6} />
+            </div>
             <div>
               <label className={labelClass}>שם מלא *</label>
               <input type="text" value={form.full_name} onChange={(e) => update('full_name', e.target.value)}
@@ -223,7 +254,11 @@ export default function RegisterPage() {
             <button
               type="button"
               onClick={() => {
-                if (step === 0 && !form.full_name.trim()) { setError('שם מלא הוא שדה חובה'); return }
+                if (step === 0) {
+                  if (!form.email.trim()) { setError('מייל הוא שדה חובה'); return }
+                  if (!form.password || form.password.length < 6) { setError('סיסמה חייבת להכיל לפחות 6 תווים'); return }
+                  if (!form.full_name.trim()) { setError('שם מלא הוא שדה חובה'); return }
+                }
                 setError('')
                 setStep(step + 1)
               }}
