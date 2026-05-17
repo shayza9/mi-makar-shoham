@@ -154,7 +154,7 @@ export default function RegisterPage() {
       )
     }
 
-    router.push('/profile/me?registered=1')
+    router.push('/auth/success')
   }
 
   const inputClass = "w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-navy-600 text-sm"
