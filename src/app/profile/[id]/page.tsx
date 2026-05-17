@@ -97,7 +97,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
         {/* Contact */}
         <div className="bg-white rounded-2xl p-4 border border-slate-200">
           <h2 className="font-semibold text-slate-900 text-sm mb-3">יצירת קשר</h2>
-          {showContactInfo ? (
+          {showContactInfo && (
             <div className="space-y-2">
               {profile.phone && (
                 <div className="flex items-center gap-2">
