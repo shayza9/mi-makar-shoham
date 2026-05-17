@@ -37,9 +37,10 @@ export default function SearchClient({ categories }: Props) {
     let profiles = (data as Profile[]) || []
 
     if (selectedCategory) {
-      profiles = profiles.filter((p) =>
-        p.categories?.some((c: Category) => String(c.id) === selectedCategory)
-      )
+      profiles = profiles.filter((p) => {
+        const raw = p as unknown as { profile_categories?: Array<{ category_id: number }> }
+        return raw.profile_categories?.some((pc) => String(pc.category_id) === selectedCategory)
+      })
     }
 
     setResults(profiles)
