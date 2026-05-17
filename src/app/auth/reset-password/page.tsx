@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 
 function ResetPasswordForm() {
   const [password, setPassword] = useState('')
@@ -10,7 +10,6 @@ function ResetPasswordForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [ready, setReady] = useState(false)
-  const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
 
@@ -39,7 +38,7 @@ function ResetPasswordForm() {
       setError('שגיאה באיפוס הסיסמה. נסה שוב.')
       setLoading(false)
     } else {
-      router.push('/')
+      window.location.href = '/'
     }
   }
 
@@ -52,7 +51,7 @@ function ResetPasswordForm() {
       <div>
         <p className="text-red-500 text-sm bg-red-50 px-3 py-2 rounded-lg mb-4">{error}</p>
         <button
-          onClick={() => router.push('/auth/login')}
+          onClick={() => { window.location.href = '/auth/login' }}
           className="w-full py-3 bg-navy-800 text-white rounded-xl font-medium hover:bg-navy-700 transition-colors"
         >
           חזור לכניסה

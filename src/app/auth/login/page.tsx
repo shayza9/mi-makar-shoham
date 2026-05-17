@@ -3,8 +3,6 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -12,7 +10,6 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [forgotMode, setForgotMode] = useState(false)
   const [forgotSent, setForgotSent] = useState(false)
-  const router = useRouter()
   const supabase = createClient()
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -32,8 +29,7 @@ export default function LoginPage() {
       return
     }
 
-    router.push('/')
-    router.refresh()
+    window.location.href = '/'
   }
 
   const handleForgot = async (e: React.FormEvent) => {
