@@ -5,8 +5,6 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import type { Category } from '@/types'
 
-const NEIGHBORHOODS = ['מרכז העיר', 'שכונת הגנים', 'נווה ירק', 'רמת שוהם', 'אחר']
-
 const STEPS = ['פרטים אישיים', 'מה אני מציע', 'סיום']
 
 export default function RegisterPage() {
@@ -22,7 +20,6 @@ export default function RegisterPage() {
     password: '',
     full_name: '',
     phone: '',
-    neighborhood: '',
     profession: '',
     description: '',
     help_offer: '',
@@ -83,7 +80,6 @@ export default function RegisterPage() {
         email: user.email,
         full_name: form.full_name,
         phone: form.phone,
-        neighborhood: form.neighborhood,
         profession: form.profession,
         description: form.description,
         help_offer: form.help_offer,
@@ -159,14 +155,6 @@ export default function RegisterPage() {
                 placeholder="050-0000000" className={inputClass} dir="ltr" />
             </div>
             <div>
-              <label className={labelClass}>שכונה בשוהם</label>
-              <select value={form.neighborhood} onChange={(e) => update('neighborhood', e.target.value)}
-                className={inputClass}>
-                <option value="">בחר שכונה</option>
-                {NEIGHBORHOODS.map((n) => <option key={n} value={n}>{n}</option>)}
-              </select>
-            </div>
-            <div>
               <label className={labelClass}>לינק וואטסאפ (אופציונלי)</label>
               <input type="url" value={form.whatsapp_link} onChange={(e) => update('whatsapp_link', e.target.value)}
                 placeholder="https://wa.me/972..." className={inputClass} dir="ltr" />
@@ -230,7 +218,6 @@ export default function RegisterPage() {
             <div className="bg-navy-50 rounded-xl p-4 text-sm space-y-2">
               <p><span className="font-medium">שם:</span> {form.full_name}</p>
               {form.phone && <p><span className="font-medium">טלפון:</span> {form.phone}</p>}
-              {form.neighborhood && <p><span className="font-medium">שכונה:</span> {form.neighborhood}</p>}
               {form.profession && <p><span className="font-medium">מקצוע:</span> {form.profession}</p>}
               {form.help_offer && <p><span className="font-medium">מציע:</span> {form.help_offer}</p>}
               {form.is_volunteer && <p className="text-green-600 font-medium">✓ מתנדב/ת</p>}

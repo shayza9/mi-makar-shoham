@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { MapPin, Phone, Mail, Briefcase, Heart, ExternalLink, Edit } from 'lucide-react'
+import { Phone, Mail, Briefcase, Heart, ExternalLink, Edit } from 'lucide-react'
 import ContactButton from '@/components/profile/ContactButton'
 
 export default async function ProfilePage({ params }: { params: Promise<{ id: string }> }) {
@@ -56,12 +56,6 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
                 <div className="flex items-center gap-1.5 mt-1">
                   <Briefcase size={14} className="text-gold-400" />
                   <p className="text-navy-100">{profile.profession}</p>
-                </div>
-              )}
-              {profile.neighborhood && (
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <MapPin size={14} className="text-navy-300" />
-                  <p className="text-navy-200 text-sm">{profile.neighborhood}, שוהם</p>
                 </div>
               )}
               <div className="flex gap-2 mt-2 flex-wrap">

@@ -81,7 +81,6 @@ export default function AdminClient({ pending: initialPending, approved, contact
                     <p className="text-sm text-slate-500">{p.email}</p>
                     {p.phone && <p className="text-sm text-slate-500" dir="ltr">{p.phone}</p>}
                     {p.profession && <p className="text-sm text-navy-700 mt-1">מקצוע: {p.profession}</p>}
-                    {p.neighborhood && <p className="text-sm text-slate-500">שכונה: {p.neighborhood}</p>}
                     {p.help_offer && <p className="text-sm text-slate-600 mt-1">מציע: {p.help_offer}</p>}
                   </div>
                   <div className="flex gap-2 flex-shrink-0">
@@ -113,7 +112,7 @@ export default function AdminClient({ pending: initialPending, approved, contact
             <div key={p.id} className="bg-white rounded-xl border border-slate-200 p-4 flex items-center justify-between gap-3">
               <div>
                 <h3 className="font-semibold text-slate-900">{p.full_name}</h3>
-                <p className="text-sm text-slate-500">{p.profession} · {p.neighborhood}</p>
+                <p className="text-sm text-slate-500">{p.profession}</p>
               </div>
               <div className="flex gap-1.5 flex-wrap">
                 {['מאומת', 'מתנדב', 'בעל עסק'].map((badge) => (

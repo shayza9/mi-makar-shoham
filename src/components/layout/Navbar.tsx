@@ -58,7 +58,7 @@ export default function Navbar() {
 
         <Link href="/" className="flex items-center gap-2.5">
           <img src="/logo.png" alt="מכבי שוהם" className="w-10 h-10 object-contain" />
-          <span className="font-bold text-white hidden sm:inline text-lg">מי מכיר? שוהם</span>
+          <span className="font-bold text-white hidden sm:inline text-lg">מי מכיר? שוהם והאזור</span>
         </Link>
 
         <div className="flex items-center gap-1">

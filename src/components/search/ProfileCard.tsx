@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { MapPin, Heart, Briefcase } from 'lucide-react'
+import { Heart, Briefcase } from 'lucide-react'
 import type { Profile } from '@/types'
 
 interface Props {
@@ -35,13 +35,6 @@ export default function ProfileCard({ profile }: Props) {
             <div className="flex items-center gap-1 mt-0.5">
               <Briefcase size={12} className="text-navy-600 flex-shrink-0" />
               <p className="text-navy-700 text-sm font-medium truncate">{profile.profession}</p>
-            </div>
-          )}
-
-          {profile.neighborhood && (
-            <div className="flex items-center gap-1 mt-0.5">
-              <MapPin size={12} className="text-slate-400 flex-shrink-0" />
-              <p className="text-slate-500 text-xs">{profile.neighborhood}</p>
             </div>
           )}
 

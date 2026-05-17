@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Search, MapPin, Star } from 'lucide-react'
+import { Search, Star } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import type { Category, Profile } from '@/types'
 import ProfileCard from './ProfileCard'
@@ -10,12 +10,9 @@ interface Props {
   categories: Category[]
 }
 
-const NEIGHBORHOODS = ['כל שוהם', 'מרכז העיר', 'שכונת הגנים', 'נווה ירק', 'רמת שוהם', 'אחר']
-
 export default function SearchClient({ categories }: Props) {
   const [query, setQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
-  const [selectedNeighborhood, setSelectedNeighborhood] = useState('')
   const [results, setResults] = useState<Profile[]>([])
   const [loading, setLoading] = useState(false)
   const [searched, setSearched] = useState(false)
@@ -35,9 +32,6 @@ export default function SearchClient({ categories }: Props) {
         `full_name.ilike.%${query}%,profession.ilike.%${query}%,description.ilike.%${query}%,help_offer.ilike.%${query}%`
       )
     }
-    if (selectedNeighborhood && selectedNeighborhood !== 'כל שוהם') {
-      q = q.eq('neighborhood', selectedNeighborhood)
-    }
 
     const { data } = await q.limit(30)
     let profiles = (data as Profile[]) || []
@@ -50,12 +44,10 @@ export default function SearchClient({ categories }: Props) {
 
     setResults(profiles)
     setLoading(false)
-  }, [query, selectedCategory, selectedNeighborhood, supabase])
+  }, [query, selectedCategory, supabase])
 
   useEffect(() => {
-    if (!query && !selectedCategory && !selectedNeighborhood) {
-      search()
-    }
+    search()
   }, [])
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -85,32 +77,18 @@ export default function SearchClient({ categories }: Props) {
           </button>
         </div>
 
-        <div className="flex gap-2 flex-wrap">
-          <div className="flex items-center gap-1.5">
-            <Star size={14} className="text-gold-500" />
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="text-sm border border-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-navy-600 bg-white"
-            >
-              <option value="">כל הקטגוריות</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <MapPin size={14} className="text-navy-600" />
-            <select
-              value={selectedNeighborhood}
-              onChange={(e) => setSelectedNeighborhood(e.target.value)}
-              className="text-sm border border-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-navy-600 bg-white"
-            >
-              {NEIGHBORHOODS.map((n) => (
-                <option key={n} value={n === 'כל שוהם' ? '' : n}>{n}</option>
-              ))}
-            </select>
-          </div>
+        <div className="flex items-center gap-1.5">
+          <Star size={14} className="text-gold-500" />
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="text-sm border border-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-navy-600 bg-white"
+          >
+            <option value="">כל הקטגוריות</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
+            ))}
+          </select>
         </div>
       </form>
 
