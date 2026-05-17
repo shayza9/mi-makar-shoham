@@ -135,6 +135,13 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
                   LinkedIn
                 </a>
               )}
+              {profile.facebook_url && (
+                <a href={profile.facebook_url} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-sm text-blue-700 hover:underline">
+                  <ExternalLink size={14} />
+                  Facebook
+                </a>
+              )}
             </div>
           ) : (
             <ContactButton

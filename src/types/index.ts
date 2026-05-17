@@ -7,6 +7,7 @@ export interface Profile {
   avatar_url?: string
   whatsapp_link?: string
   linkedin_url?: string
+  facebook_url?: string
   profession?: string
   description?: string
   help_offer?: string

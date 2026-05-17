@@ -7,6 +7,51 @@ import type { Category } from '@/types'
 
 const STEPS = ['פרטים אישיים', 'מה אני מציע', 'סיום']
 
+function NewCategoryInput({ onAdd }: { onAdd: (cat: Category) => void }) {
+  const [open, setOpen] = useState(false)
+  const [name, setName] = useState('')
+  const [saving, setSaving] = useState(false)
+  const supabase = createClient()
+
+  const save = async () => {
+    if (!name.trim()) return
+    setSaving(true)
+    const slug = name.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '-' + Date.now()
+    const { data, error } = await supabase
+      .from('categories')
+      .insert({ name: name.trim(), icon: '✨', slug })
+      .select()
+      .single()
+    if (!error && data) {
+      onAdd(data as Category)
+      setName('')
+      setOpen(false)
+    }
+    setSaving(false)
+  }
+
+  if (!open) return (
+    <button type="button" onClick={() => setOpen(true)}
+      className="text-sm text-navy-700 hover:underline">
+      + הוסף קטגוריה חדשה
+    </button>
+  )
+
+  return (
+    <div className="flex gap-2 mt-1">
+      <input value={name} onChange={(e) => setName(e.target.value)}
+        placeholder="שם הקטגוריה החדשה"
+        className="flex-1 px-3 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy-600" />
+      <button type="button" onClick={save} disabled={saving || !name.trim()}
+        className="px-3 py-1.5 bg-navy-800 text-white rounded-lg text-sm hover:bg-navy-700 disabled:opacity-50">
+        {saving ? '...' : 'הוסף'}
+      </button>
+      <button type="button" onClick={() => setOpen(false)}
+        className="px-2 py-1.5 text-slate-400 hover:text-slate-600 text-sm">✕</button>
+    </div>
+  )
+}
+
 export default function RegisterPage() {
   const [step, setStep] = useState(0)
   const [categories, setCategories] = useState<Category[]>([])
@@ -27,6 +72,7 @@ export default function RegisterPage() {
     is_volunteer: false,
     whatsapp_link: '',
     linkedin_url: '',
+    facebook_url: '',
     selectedCategories: [] as number[],
   })
 
@@ -87,6 +133,7 @@ export default function RegisterPage() {
         is_volunteer: form.is_volunteer,
         whatsapp_link: form.whatsapp_link,
         linkedin_url: form.linkedin_url,
+        facebook_url: form.facebook_url,
       })
 
     if (profileError) { setError('שגיאה בשמירת הפרופיל. נסה שוב.'); setLoading(false); return }
@@ -171,8 +218,8 @@ export default function RegisterPage() {
                 placeholder='עורך דין, מורה, אינסטלטור...' className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>קטגוריות (בחר עד 3)</label>
-              <div className="flex flex-wrap gap-2">
+              <label className={labelClass}>קטגוריה (בחר או הוסף חדשה)</label>
+              <div className="flex flex-wrap gap-2 mb-2">
                 {categories.map((c) => (
                   <button
                     key={c.id}
@@ -188,6 +235,10 @@ export default function RegisterPage() {
                   </button>
                 ))}
               </div>
+              <NewCategoryInput onAdd={(cat) => {
+                setCategories(prev => [...prev, cat])
+                toggleCategory(cat.id)
+              }} />
             </div>
             <div>
               <label className={labelClass}>במה אני יכול לעזור לקהילה?</label>
@@ -200,6 +251,16 @@ export default function RegisterPage() {
               <textarea value={form.help_seek} onChange={(e) => update('help_seek', e.target.value)}
                 placeholder="מה הייתי שמח לקבל מהקהילה..."
                 rows={2} className={`${inputClass} resize-none`} />
+            </div>
+            <div>
+              <label className={labelClass}>LinkedIn (אופציונלי)</label>
+              <input type="url" value={form.linkedin_url} onChange={(e) => update('linkedin_url', e.target.value)}
+                placeholder="https://linkedin.com/in/..." className={inputClass} dir="ltr" />
+            </div>
+            <div>
+              <label className={labelClass}>Facebook (אופציונלי)</label>
+              <input type="url" value={form.facebook_url} onChange={(e) => update('facebook_url', e.target.value)}
+                placeholder="https://facebook.com/..." className={inputClass} dir="ltr" />
             </div>
             <div className="flex items-center gap-2">
               <input type="checkbox" id="volunteer" checked={form.is_volunteer}
